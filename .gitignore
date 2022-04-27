@@ -2,8 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-*.html
-*.png
+battbook/book/
 data/
 documents/
 .Rdata
