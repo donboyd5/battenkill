@@ -32,8 +32,8 @@ format:
   html:
     theme: cosmo
     self-contained: false
-  pdf:
-    documentclass: scrreprt
+  # pdf:
+  #   documentclass: scrreprt
 
 
 
