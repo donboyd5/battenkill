@@ -16,6 +16,7 @@ book:
     - ept.qmd
     - pma.qmd
     # - explore.qmd
+    - data.qmd
     - summary.qmd
     - references.qmd
 

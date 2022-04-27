@@ -1,0 +1,35 @@
+
+```{r startup}
+
+source(here::here("r", "libraries.r"))
+bkill <- readRDS(here::here("data", "bkill.rds"))
+
+```
+
+## Data
+
+Here are the key data elements. I'll add more as I learn what they are.
+
+```{r}
+#| include: true
+
+tabdata <- bkill %>%
+  select(date, streamid, stream, stabbr, locid, locdesc, latitude, longitude, hbi, ept_rich, pma)
+
+tab <- datatable(tabdata,
+                 rownames=FALSE,
+                 filter = "top", 
+                 # extensions = c("Buttons","FixedColumns"),
+                 options=list(pageLength = 10, 
+                              autoWidth = TRUE,
+                              scrollX = TRUE) #,
+                              # fixedColumns = list(leftColumns = 2),
+                              # columnDefs = list(
+                              #   list(width = '220px', targets = 1)))
+                 ) 
+
+tab
+
+```
+
+
