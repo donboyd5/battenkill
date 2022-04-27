@@ -1,0 +1,8 @@
+# Preface {.unnumbered}
+
+This document analyzes data on aquatic insects in the Battenkill River, based on two Excel files provided by Jacob Fetterman:
+
+-   New York data sampled between October 1984 and August 2016 (2020.04.24_NYS DEC RIBS Sampling Data.xlsx)
+
+-   Vermont data sampled between October 1986 and September 2019 (2020.05.04_VFWD IWIS Sampling Data.xlsx)
+

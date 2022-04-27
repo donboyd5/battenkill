@@ -1,0 +1,13 @@
+# Introduction
+
+Different types of aquatic insects tolerate different stream conditions and levels of pollution. Their presence or absence, and quantity, can indicate clean or polluted water.
+
+This document analyzes data on **benthic macroinvertebrates**, also known as bottom-dwelling aquatic insects:
+
+-   **benthic**: bottom dwelling
+
+-   **macro:** large enough to be seen with the naked eye
+
+-   **invertebrate:** an animal without a backbone
+
+One method researchers use to assess the quality of water in marine and freshwater ecosystems is to gather representative samples of macroinvertibrates in a stream environment and construct measures, known as **biotic indexes,** that indicate the types and abundance of organisms present.

@@ -1,0 +1,110 @@
+# Hilsenhoff's Biotic Index (HBI)
+
+The Hilsenhoff Biotic Index is calculated by multiplying the number of individuals of each species by its assigned tolerance value (tolerance values can be found in Appendix 18.13), summing these products, and dividing by the total number of individuals. On a 0-10 scale, tolerance values range from intolerant (0) to tolerant (10). Tolerance values, listed in Appendix 17.11, are mostly from Hilsenhoff (1987) however some have been recalibrated based on NYS datasets. **High HBI values are indicative of organic (sewage) pollution, while low values indicate lack of sewage effects.** (NY doc)
+
+```{r startup}
+
+source(here::here("r", "libraries.r"))
+bkill <- readRDS(here::here("data", "bkill.rds"))
+
+```
+
+
+## Description
+
+```{r}
+#| include: true
+
+# use green for VT, blue for NY
+clrs <- c()
+
+
+pdata <- bkill %>%
+  filter(!is.na(hbi)) %>%
+  select(date, year, src, stabbr, streamid, stream, locdesc, hbi) %>%
+  mutate(streamkind=ifelse(streamid=="BATT", "BATT", "NotBATT"),
+         fstreamkind=factor(streamkind, 
+                            levels=c("BATT", "NotBATT"),
+                            labels=c("Battenkill", "Not Battenkill")),
+         fstream=paste0(streamkind, "-", stabbr))
+
+# avgs <- pdata %>%
+#   group_by(stabbr) %>%
+#   summarise(avg=mean(hbi, na.rm=TRUE), .groups="drop")
+# 
+# nyavg <- avgs %>% filter(stabbr=="NY") %>% pull(avg)
+# vtavg <- avgs %>% filter(stabbr=="VT") %>% pull(avg)
+brks <- seq.Date(as.Date("1980-01-01"), as.Date("2020-01-01"), "5 years")
+
+pdata %>%
+  ggplot(aes(date, hbi, colour=stabbr, size=fstreamkind)) +
+  scale_colour_manual(name="State", values=c("red", "blue")) +
+  scale_size_manual(name="Stream kind", values = c(3, 1)) +
+  scale_x_date(name=NULL, breaks = brks, date_labels="%Y") +
+  scale_y_continuous(name="HBI", breaks=0:10) +
+  geom_point() +
+  ggtitle("Hilsenhoff’s Biotic Index (HBI) in the Battenkill region",
+          subtitle = "High values indicate more organic (sewage) pollution") +
+  theme_bw()
+
+```
+
+## Analysis [TO COME]
+
+```{r}
+#| eval: false
+#| include: true
+# par(mar=c(3,4,2,2))
+# display.brewer.all()
+# BuPu
+# I need 8 colors
+# mybupu <- c(brewer.pal(9, "BuPu")[3:9], "black")
+# mycol <- brewer.pal(8, "YlOrRd")
+mycol <- c(brewer.pal(8, "YlOrRd")[2:8], "#6E016B")
+
+# show_col((brewer.pal(8, "BuPu")))
+# show_col(mycol)
+
+pdata <- bkill %>%
+  mutate(yearf=cut(year, breaks = seq(1980, 2020, 5)))
+
+avgs <- pdata %>%
+  group_by(stabbr) %>%
+  summarise(avg=mean(hbi, na.rm=TRUE), .groups="drop")
+
+nyavg <- avgs %>% filter(stabbr=="NY") %>% pull(avg)
+vtavg <- avgs %>% filter(stabbr=="VT") %>% pull(avg)
+
+pdata %>%
+  ggplot(aes(vtnyrivermile, hbi, colour=yearf)) +
+  geom_point() +
+  geom_vline(xintercept = 0) +
+  geom_segment(x=-Inf, y=vtavg, xend=0, yend=vtavg, colour="darkgreen") +
+  geom_segment(x=0, y=nyavg, xend=Inf, yend=nyavg, colour="blue") +
+  # scale_colour_brewer(name="Time period", palette = "BuPu") +
+  scale_colour_manual(name="Time period", values=mycol) +
+  scale_x_continuous(name="River-miles from Vermont-New York border",
+                     breaks=seq(-100, 100, 5),
+                     labels=abs(seq(-100, 100, 5))) +
+  scale_y_continuous(name="HBI value", breaks=seq(0, 10, .5)) +
+  annotate(geom="text", x=-60, y=0.5, label="Vermont", hjust=0, colour="darkgreen") +
+  annotate(geom="text", x=50, y=0.5, label="New York", hjust=1, colour="blue") +
+  ggtitle("Hilsenhoff’s Biotic Index (HBI) by location on water",
+          subtitle = "High values indicate more organic (sewage) pollution") +
+  theme_bw()
+
+# pdata %>%
+#   ggplot(aes(longitude, hbi, colour=yearf)) +
+#   geom_point() +
+#   # scale_colour_brewer(name="Time period", palette = "BuPu") +
+#   scale_colour_manual(name="Time period", values=mycol) +
+#   # scale_x_continuous(breaks=seq(-100, 100, 5),                     labels=abs(seq(-100, 100, 5))) +
+#   scale_y_continuous(name="HBI value", breaks=seq(0, 10, .5)) +
+#   # annotate(geom="text", x=-60, y=0.5, label="Vermont", hjust=0, colour="darkgreen") +
+#   # annotate(geom="text", x=50, y=0.5, label="New York", hjust=1, colour="blue") +
+#   # ggtitle("Hilsenhoff’s Biotic Index (HBI) by location on water",
+#   #         subtitle = "High values indicate more organic (sewage) pollution") +
+#   theme_bw()
+
+
+```

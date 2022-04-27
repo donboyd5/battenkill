@@ -1,0 +1,5 @@
+/.quarto/
+/_book/
+/hbi_cache/
+/hbi_files/
+*.html

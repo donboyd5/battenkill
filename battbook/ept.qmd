@@ -1,0 +1,23 @@
+# Ephemeroptera, Plecoptera, and Trichoptera (the EPT Index)
+
+The EPT Index is named for three orders of aquatic insects that are common in the benthic (bottom dwelling) macroinvertebrate community:
+
+-   Ephemeroptera (mayflies)
+
+-   Plecoptera (stoneflies), and
+
+-   Trichoptera (caddisflies).
+
+The EPT Index is based on the premise that high-quality streams usually have the greatest species richness. Many aquatic insect species are intolerant of pollutants and will not be found in polluted waters. **The greater the pollution, the lower the species richness expected, as only a few species are pollutant tolerant.** (@mcquaid_ept_2012)
+
+```{r startup}
+source(here::here("r", "libraries.r"))
+bkill <- readRDS(here::here("data", "bkill.rds"))
+```
+
+
+## Analysis [TO COME]
+```{r}
+
+```
+

@@ -1,0 +1,7 @@
+## Percent Model Affinity for taxonomic group composition (PMA)
+
+The Percent Model Affinity (PMA) compares abundance of different stream populations to estimates of abundance based on a model.
+
+[Details to come]
+
+## Analysis [TO COME]

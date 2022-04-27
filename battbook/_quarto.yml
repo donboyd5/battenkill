@@ -1,0 +1,38 @@
+project:
+  type: book
+
+book:
+  title: "Battenkill Aquatic Insects"
+  author: "Don Boyd"
+  date: today
+  date-format: long
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - clean.qmd
+    # - notes.qmd
+    - hbi.qmd
+    - ept.qmd
+    - pma.qmd
+    # - explore.qmd
+    - summary.qmd
+    - references.qmd
+
+# title-block-banner: true
+bibliography: references.bib
+
+execute: 
+  cache: false
+  echo: false
+  warning: false
+  include: false
+
+format:
+  html:
+    theme: cosmo
+    self-contained: false
+  pdf:
+    documentclass: scrreprt
+
+
+

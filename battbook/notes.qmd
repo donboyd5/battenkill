@@ -1,0 +1,61 @@
+
+
+
+# Notes
+
+rivermiles is the number of river miles that a spot on a SPECIFIC river or
+stream is from ITS mouth Thus, it is specific to a stream. For example, Mad Tom
+Brook Rocky Lane (1.2 river miles) is at almost the same longitude as Battenkill
+dws 1st 7A bridge (going south) (55.4 river miles) but river miles are very
+different because they are measured relative to different mouths (Mad Tom Brook
+Rocky Lane is 1.2 river miles from where it empties into the Battenkill, which
+is about 55 river miles from where it empties into the Hudson).
+
+Note that long -72.9986724 is east of long -73.0116119. So absolute value of long goes down as we move east.
+
+Long -73.57 is the approx mouth of the Battenkill.
+
+Lat Long 43.106371, -73.265041 is the Battenkill NY-VT border
+
+
+# Misc
+
+
+Benthic macroinvertebrates are small stream-inhabiting creatures that are large
+enough to be seen with the naked eye and spend all or part of their life cycle
+in or on the stream bottom. The name benthic macroinvertebrate means
+bottom-dwelling (benthic) and small organisms without backbones (invertebrate).
+Benthic macroinvertebrates have adapted to life in a stream, utilizing all
+habitat niches. For example, some are adapted to higher velocity portions of the
+stream, some live below the bottom of the stream, some crawl for food, while
+others let the food come to them. Healthy streams can have several hundred
+different kinds of benthic macroinvertebrates with total numbers ranging in the
+thousands. (McQuaid)
+
+
+
+## EPT Index: Ephemeroptera (mayflies), Plecoptera (stoneflies), and Trichoptera (caddisflies)
+
+The EPT Index is named for three orders of aquatic insects that are common in
+the benthic macroinvertebrate community: Ephemeroptera (mayflies), Plecoptera
+(stoneflies), and Trichoptera (caddisflies). The EPT Index is based on the
+premise that high-quality streams usually have the greatest species richness.
+Many aquatic insect species are intolerant of pollutants and will not be found
+in polluted waters. The greater the pollution, the lower the species richness
+expected, as only a few species are pollutant tolerant. (@mcquaid_ept_2012)
+
+
+## Percent Model Affinity for taxonomic group composition (PMA)
+
+This is a measure of similarity to a model non-impacted community based on
+percent abundance in 7 major groups (Novak and Bode, 1992). Percentage
+similarity as calculated in Washington (1984) is used to measure similarity.
+Table 13 contains models for specific methods.
+
+Procedure for Calculating PMA (Table 14): Example calculation of Percent Model
+Affinity for taxonomic group composition (PMA) using a 100-organism subsample
+from a stream riffle community. The percent contribution of 7 major groups is
+determined and compared to the expected contribution of those groups in a model
+natural community. The lesser value of the two values for each taxonomic group
+is summed giving the result.
+
