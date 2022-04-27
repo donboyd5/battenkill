@@ -48,7 +48,7 @@ bkill2 %>%
 
 ## Determining name of stream
 
-The NYSDEC data have a variable (`LOCATION`) that identifies each river or stream uniquely but the VFWD data do not. (For example,
+The NYSDEC data have a variable (`LOCATION`) that identifies each river or stream uniquely but the VFWD data do not.
 
 It is important to have a unique identifier for each stream because the "river miles" variable measures the number of miles from the mouth of a stream to a given site, and it is meaningless without knowing which stream it refers to.
 
