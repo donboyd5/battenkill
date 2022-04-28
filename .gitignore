@@ -2,13 +2,15 @@
 .Rhistory
 .RData
 .Ruserdata
+.nojekyll
 data/
+# githubpages docs file - if using ghp, need to upload this way
+docs/
 documents/
-*cache/
+battbook/_book/
 battbook/.quarto/
 battbook/docs/  
-# the above is my work-in-progress docs folder
-# note that main-level docs folder is NOT gitignored
+battbook/*_cache/
 battbook/*_files/
 
 

@@ -1,14 +1,17 @@
+
+
 # Hilsenhoff's Biotic Index (HBI)
 
-The Hilsenhoff Biotic Index is calculated by multiplying the number of individuals of each species by its assigned tolerance value (tolerance values can be found in Appendix 18.13), summing these products, and dividing by the total number of individuals. On a 0-10 scale, tolerance values range from intolerant (0) to tolerant (10). Tolerance values, listed in Appendix 17.11, are mostly from Hilsenhoff (1987) however some have been recalibrated based on NYS datasets. **High HBI values are indicative of organic (sewage) pollution, while low values indicate lack of sewage effects.** (NY doc)
+The Hilsenhoff Biotic Index is calculated by multiplying the number of individuals of each species by its assigned tolerance value (see Appendix 18.13 of the NY citation below), summing these products, and dividing by the total number of individuals. On a 0-10 scale, tolerance values range from intolerant (0) to tolerant (10). Tolerance values, listed in Appendix 17.11 of the NY citation, are mostly from Hilsenhoff (1987) however some have been recalibrated based on NYS datasets. **High HBI values are indicative of organic (sewage) pollution, while low values indicate lack of sewage effects.** [@newyorkstatedepartmentofenvironmentalconservationdivisionofwaterStandardOperatingProcedure2021]
 
 ```{r startup}
 
 source(here::here("r", "libraries.r"))
 bkill <- readRDS(here::here("data", "bkill.rds"))
+# git status --ignored
+# git ls-files -i  # shows what is gitignored
 
 ```
-
 
 ## Description
 
@@ -49,7 +52,7 @@ pdata %>%
 
 ```
 
-## Analysis [TO COME]
+## Analysis \[TO COME\]
 
 ```{r}
 #| eval: false

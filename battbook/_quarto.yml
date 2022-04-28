@@ -1,6 +1,6 @@
 project:
   type: book
-  output-dir: ../docs
+  output-dir: _book # ../docs or else just docs
 
 book:
   title: "Battenkill Aquatic Insects"
@@ -21,7 +21,8 @@ book:
     - references.qmd
 
 # title-block-banner: true
-bibliography: references.bib
+# references.bib
+bibliography: _Bibliography.bib
 
 execute: 
   cache: true
