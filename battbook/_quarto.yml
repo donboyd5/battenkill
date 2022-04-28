@@ -24,7 +24,7 @@ book:
 bibliography: references.bib
 
 execute: 
-  cache: false
+  cache: true
   echo: false
   warning: false
   include: false

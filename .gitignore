@@ -2,12 +2,18 @@
 .Rhistory
 .RData
 .Ruserdata
-<<<<<<< HEAD
-battbook/book/
-=======
->>>>>>> main
 data/
 documents/
-.Rdata
-.httr-oauth
-.DS_Store
+*cache/
+battbook/.quarto/
+battbook/docs/  
+# the above is my work-in-progress docs folder
+# note that main-level docs folder is NOT gitignored
+battbook/*_files/
+
+
+# If there is a separator at the beginning or middle (or both) of the pattern, then the pattern is relative to the directory level of the particular .gitignore file itself. Otherwise the pattern may also match at any level below the .gitignore level.
+
+# If there is a separator at the end of the pattern then the pattern will only match directories, otherwise the pattern can match both files and directories.
+
+# For example, a pattern doc/frotz/ matches doc/frotz directory, but not a/doc/frotz directory; however frotz/ matches frotz and a/frotz that is a directory (all paths are relative from the .gitignore file).
