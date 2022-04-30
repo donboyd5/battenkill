@@ -6,11 +6,74 @@ The HBI is calculated by multiplying the number of individuals of each species b
 
 ```{r startup}
 
-source(here::here("r", "libraries.r"))
-bkill <- readRDS(here::here("data", "bkill.rds"))
+# source(here::here("r", "libraries.r"))
+# bkill <- readRDS(here::here("data", "bkill.rds"))
 # git status --ignored
 
 ```
+
+
+## HBI geolocations
+```{r}
+bkill <- readRDS(here::here("data", "bkill.rds"))
+bkbb2 <- readRDS(here::here("data", "bkbb2.rds"))
+basemap <- readRDS(here::here("data", "basemap.rds"))
+
+pts <- bkill %>% 
+  dplyr::select(year, locid, locdesc, latitude, longitude, hbi) %>%
+  mutate(yearf=case_when(year < 2000 ~ "< 2000",
+                         year %in% 2001:2009 ~ "2000-2009",
+                         year >= 2010 ~ "2010+",
+                         TRUE ~ "ERROR") %>% as.factor())
+
+#.. define map boundaries ----
+hstretch <- c(-.02, 0)
+vstretch <- c(-.01, 0)
+
+xlims <- bkbb2[c("left", "right")] + hstretch
+ylims <- bkbb2[c("bottom", "top")] + vstretch
+
+
+jit <- .03
+clrs <- c('#fee0d2','#fc9272','#de2d26') # reds
+# clrs <- c('#deebf7','#9ecae1','#3182bd') # blues
+hbimap <- basemap +
+  geom_point(aes(x=longitude, y=latitude, size=hbi, colour=yearf),
+             position=position_dodge(width=jit),
+             data=pts) +
+  scale_size_area(max_size = 4) +
+  scale_color_manual(values=clrs) +
+  labs(x=NULL, y=NULL, size="HBI", colour=NULL) +
+  coord_sf(xlim=xlims,
+           ylim=ylims, 
+           expand=FALSE) +
+  scale_size_area(max_size = 3) +
+  theme_minimal() +
+  theme(axis.text.x=element_blank(), #remove x axis labels
+        axis.ticks.x=element_blank(), #remove x axis ticks
+        axis.text.y=element_blank(),  #remove y axis labels
+        axis.ticks.y=element_blank()  #remove y axis ticks
+  )
+
+ggsave(filename="images/hbimap.png", plot=hbimap, scale=3)
+
+```
+<!-- ::: {style="width: 150%;"} -->
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+#| column: page
+
+hbimap
+
+```
+
+:::{.column-page}
+![](images/hbimap.png)
+:::
+
 
 ## HBI by month of sample
 

@@ -1,10 +1,13 @@
+
+# specific files
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 .nojekyll
+
+# folders
 data/
-# githubpages docs file - if using ghp, need to upload this way
 docs/
 documents/
 battbook/_book/
@@ -12,9 +15,12 @@ battbook/.quarto/
 battbook/docs/  
 battbook/*_cache/
 battbook/*_files/
+
+# file types
 *.pdf
 *.png
 *.rda
+*.rdata
 
 
 # If there is a separator at the beginning or middle (or both) of the pattern, then the pattern is relative to the directory level of the particular .gitignore file itself. Otherwise the pattern may also match at any level below the .gitignore level.

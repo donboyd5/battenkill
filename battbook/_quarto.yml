@@ -1,6 +1,13 @@
 project:
   type: book
   output-dir: _book # ../docs or else just docs
+  pre-render:
+  # - ../r/getdata.r
+  # - ../r/cleandata.r
+  # - ../r/preparemap.r
+  - _load.r  # always load libraries and get cleaned data
+  # post-render: 
+  # - post_render.r
 
 book:
   title: "Battenkill Aquatic Insects"
@@ -18,7 +25,7 @@ book:
     - data.qmd
     - summary.qmd
     - references.qmd
-    - clean.qmd
+    - clean.qmd  # results of cleaning - don't do actual cleaning here
     
 
 # title-block-banner: true
