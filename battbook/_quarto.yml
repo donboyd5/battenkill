@@ -10,7 +10,6 @@ book:
   chapters:
     - index.qmd
     - intro.qmd
-    - clean.qmd
     # - notes.qmd
     - hbi.qmd
     - ept.qmd
@@ -19,6 +18,8 @@ book:
     - data.qmd
     - summary.qmd
     - references.qmd
+    - clean.qmd
+    
 
 # title-block-banner: true
 # references.bib

@@ -6,3 +6,6 @@ This document analyzes data on aquatic insects in the Battenkill River, based on
 
 -   Vermont data sampled between October 1986 and September 2019 (2020.05.04_VFWD IWIS Sampling Data.xlsx)
 
+I adjusted for several anomalies in the data (e.g., miscoded latitude and longitude) and added several identification variables to the data.
+
+The data-cleaning appendix discusses these adjustments.

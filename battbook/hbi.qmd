@@ -1,26 +1,71 @@
+# Hilsenhoff Biotic Index (HBI)
 
+The Hilsenhoff Biotic Index (HBI) measures the tolerance of organisms in an area to organic pollutants. It ranges from 0 to 10. **High HBI values are indicative of organic (sewage) pollution, while low values indicate lack of sewage effects.**
 
-# Hilsenhoff's Biotic Index (HBI)
-
-The Hilsenhoff Biotic Index is calculated by multiplying the number of individuals of each species by its assigned tolerance value (see Appendix 18.13 of the NY citation below), summing these products, and dividing by the total number of individuals. On a 0-10 scale, tolerance values range from intolerant (0) to tolerant (10). Tolerance values, listed in Appendix 17.11 of the NY citation, are mostly from Hilsenhoff (1987) however some have been recalibrated based on NYS datasets. **High HBI values are indicative of organic (sewage) pollution, while low values indicate lack of sewage effects.** [@newyorkstatedepartmentofenvironmentalconservationdivisionofwaterStandardOperatingProcedure2021]
+The HBI is calculated by multiplying the number of individuals of each species by its assigned tolerance value (see Appendix 18.13 of the NY citation below), summing these products, and dividing by the total number of individuals. Tolerance values, listed in Appendix 17.11 of the NY citation, are mostly from Hilsenhoff (1987) however some have been recalibrated based on NYS datasets. [@newyorkstatedepartmentofenvironmentalconservationdivisionofwaterStandardOperatingProcedure2021]
 
 ```{r startup}
 
 source(here::here("r", "libraries.r"))
 bkill <- readRDS(here::here("data", "bkill.rds"))
 # git status --ignored
-# git ls-files -i  # shows what is gitignored
 
 ```
 
-## Description
+## HBI by month of sample
+
+According to [@hilsenhoffSeasonalCorrectionFactors1988]:
+
+> Dissolved oxygen levels often determine which species of arthropods are able to live in a stream, with current and water temperature being important related factors. Rapid currents transport more oxygen past insects making dissolved oxygen more available, while higher temperatures increase metabolism and the need for oxygen. In summer, dissolved oxygen in streams reaches its lowest levels because warm water holds less oxygen, nocturnal plant respiration reaches a maximum, and aerobic decomposition of organic matter is also at its maximum. To avoid summer stress from low dissolved oxygen, higher summer metabolic rates, and often low water levels, many insects have resistant eggs or nymphs that pass the summer in diapause. **Arthropods that are collected in summer tend to be more tolerant of low dissolved oxygen and have higher tolerance values, causing BI values to be higher in the summer**.
+
+The figure below shows HBI values by month, for NY and VT samples, broken down by whether they were taken on the Battenkill, or on other streams. Note that:
+
+-   Virtually no VT samples were taken in June-July-August.
+
+-   Samples were taken in both states in September and October. The NY HBI values appear to be higher than the VT values in those months. This is especially true on the smaller streams in September.
+
+-   The samples from small streams in VT tend to have lower HBI values (less indication of pollution) than those from the Battenkill in VT, but in NY, the smaller streams appear to have HBI levels that are similar to those in the Battenkill.
+
+```{r}
+#| include: true
+
+pdata <- bkill %>%
+  filter(!is.na(hbi)) %>%
+  select(date, year, src, stabbr, streamid, stream, locdesc, hbi) %>%
+  mutate(streamkind=ifelse(streamid=="BATT", "BATT", "NotBATT"),
+         fstreamkind=factor(streamkind, 
+                            levels=c("BATT", "NotBATT"),
+                            labels=c("Battenkill", "Not Battenkill")),
+         fstream=paste0(streamkind, "-", stabbr),
+         month=month(date),
+         monthf=factor(month, levels=1:12, labels=month.abb))
+
+# avgs <- pdata %>%
+#   group_by(stabbr) %>%
+#   summarise(avg=mean(hbi, na.rm=TRUE), .groups="drop")
+# 
+# nyavg <- avgs %>% filter(stabbr=="NY") %>% pull(avg)
+# vtavg <- avgs %>% filter(stabbr=="VT") %>% pull(avg)
+
+pdata %>%
+  ggplot(aes(monthf, hbi, colour=stabbr, size=fstreamkind)) +
+  geom_point(position=position_dodge(0.5)) +
+  scale_colour_manual(name="State", values=c("red", "blue")) +
+  scale_size_manual(name="Stream kind", values = c(3, 1)) +
+  scale_x_discrete(name=NULL) +
+  scale_y_continuous(name="HBI", breaks=0:10, limits = c(0, NA)) +
+  ggtitle("Hilsenhoff Biotic Index (HBI) in the Battenkill region, by month of sample",
+          subtitle = "High values indicate more organic (sewage) pollution") +
+  theme_bw()
+
+```
+
+## HBI by date of sample
 
 ```{r}
 #| include: true
 
 # use green for VT, blue for NY
-clrs <- c()
-
 
 pdata <- bkill %>%
   filter(!is.na(hbi)) %>%
@@ -44,25 +89,20 @@ pdata %>%
   scale_colour_manual(name="State", values=c("red", "blue")) +
   scale_size_manual(name="Stream kind", values = c(3, 1)) +
   scale_x_date(name=NULL, breaks = brks, date_labels="%Y") +
-  scale_y_continuous(name="HBI", breaks=0:10) +
+  scale_y_continuous(name="HBI", breaks=0:10, limits = c(0, NA)) +
   geom_point() +
-  ggtitle("Hilsenhoff’s Biotic Index (HBI) in the Battenkill region",
+  ggtitle("Hilsenhoff Biotic Index (HBI) in the Battenkill region, by date of sample",
           subtitle = "High values indicate more organic (sewage) pollution") +
   theme_bw()
 
 ```
 
-## Analysis \[TO COME\]
+## More \[TO COME\]
 
 ```{r}
 #| eval: false
 #| include: true
-# par(mar=c(3,4,2,2))
-# display.brewer.all()
-# BuPu
-# I need 8 colors
-# mybupu <- c(brewer.pal(9, "BuPu")[3:9], "black")
-# mycol <- brewer.pal(8, "YlOrRd")
+
 mycol <- c(brewer.pal(8, "YlOrRd")[2:8], "#6E016B")
 
 # show_col((brewer.pal(8, "BuPu")))

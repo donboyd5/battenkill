@@ -1,8 +1,7 @@
-# Data cleaning
+# Appendix: Data cleaning {.unnumbered}
 
 ```{r}
 source(here::here("r", "libraries.r"))
-
 bkill1 <- readRDS(here::here("data", "bkill_raw.rds"))
 
 # duplicated(blockBinding()# duplicated(bkill1$locdesc)
@@ -14,9 +13,11 @@ Several of the VFWD sites appear to have latitude or longitude miscoded. I deter
 
 -   Site id 502377, White Creek Rt 153 bridge, with stated lat, long of (42.2363891, -73.2436065) should have latitude start with 43, not 42.
 
--   Site id 521549, White Creek off Kent Hollow Rd, with stated lat, long of (42.2342491, -73.2149276 ) should have latitude start with 43, not 42.
+-   Site id 502378, White Creek ups Rt 153, with stated lat, long of (42.2356796, -73.2388) should have latitude start with 43, not 42.
 
 -   Site id 502397, Bourn Book Little Mud Pond, with stated lat, long of (43.1402816, -73.9894409) should have longitude start with -72 rather than -73.
+
+-   Site id 521549, White Creek off Kent Hollow Rd, with stated lat, long of (42.2342491, -73.2149276 ) should have latitude start with 43, not 42.
 
 The table below shows the sites for which I changed latitude or longitude values (the variable names ending in "\_raw" show the data as reported; the other variables are values as adjusted).
 
@@ -28,6 +29,7 @@ bkill2 <- bkill1 %>%
          # Site id 502377, White Creek Rt 153 bridge, with stated lat, long of (42.2363891,	-73.2436065) should have latitude start with 43, not 42
          # Site id 521549	White Creek off Kent Hollow Rd, with stated lat, long of (42.2342491,	-73.2149276) should have latitude start with 43, not 42
          latitude=case_when(src=="VFWD" & siteid==502377 ~ latitude_raw + 1,
+                            src=="VFWD" & siteid==502378 ~ latitude_raw + 1,
                             src=="VFWD" & siteid==521549 ~ latitude_raw + 1,
                             TRUE ~ latitude_raw),
          longitude=case_when(src=="VFWD" & siteid==502397 ~ longitude_raw + 1,
@@ -38,7 +40,7 @@ bkill2 <- bkill1 %>%
 
 bkill2 %>%
   filter(latitude != latitude_raw | longitude != longitude_raw) %>%
-  select(src, siteid, locdesc, latitude_raw, latitude, longitude_raw, longitude) %>%
+  select(src, siteid, locdesc, latitude_raw, longitude_raw, latitude, longitude) %>%
   distinct() %>%
   arrange(siteid) %>%
   kbl() %>%
@@ -211,3 +213,11 @@ saveRDS(bkill, here::here("data", "bkill.rds"))
 
 
 ```
+
+
+```{r}
+
+
+```
+
+
