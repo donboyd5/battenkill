@@ -6,18 +6,19 @@ The HBI is calculated by multiplying the number of individuals of each species b
 
 ```{r startup}
 
-# source(here::here("r", "libraries.r"))
+source(here::here("r", "libraries.r"))
 # bkill <- readRDS(here::here("data", "bkill.rds"))
 # git status --ignored
 
 ```
 
-
 ## HBI geolocations
+
 ```{r}
-bkill <- readRDS(here::here("data", "bkill.rds"))
-bkbb2 <- readRDS(here::here("data", "bkbb2.rds"))
-basemap <- readRDS(here::here("data", "basemap.rds"))
+#| label: map
+bkill <- readRDS(here::here("data", "gis", "bkill.rds"))
+bkbb2 <- readRDS(here::here("data", "gis", "bkbb2.rds"))
+basemap <- readRDS(here::here("data", "gis", "basemap.rds"))
 
 pts <- bkill %>% 
   dplyr::select(year, locid, locdesc, latitude, longitude, hbi) %>%
@@ -34,20 +35,22 @@ xlims <- bkbb2[c("left", "right")] + hstretch
 ylims <- bkbb2[c("bottom", "top")] + vstretch
 
 
-jit <- .03
+jit <- .005
 clrs <- c('#fee0d2','#fc9272','#de2d26') # reds
 # clrs <- c('#deebf7','#9ecae1','#3182bd') # blues
 hbimap <- basemap +
   geom_point(aes(x=longitude, y=latitude, size=hbi, colour=yearf),
-             position=position_dodge(width=jit),
+             position=position_jitter(width=jit, height=jit), # width=jit
              data=pts) +
   scale_size_area(max_size = 4) +
   scale_color_manual(values=clrs) +
-  labs(x=NULL, y=NULL, size="HBI", colour=NULL) +
+  labs(x=NULL, y=NULL, size="HBI", colour="Measurement\nyear") +
   coord_sf(xlim=xlims,
            ylim=ylims, 
            expand=FALSE) +
   scale_size_area(max_size = 3) +
+  ggtitle("Hilsenhoff Biotic Index (HBI) measurements in the Battenkill region",
+          subtitle = "Higher values (larger dots) indicate more organic (sewage) pollution") +
   theme_minimal() +
   theme(axis.text.x=element_blank(), #remove x axis labels
         axis.ticks.x=element_blank(), #remove x axis ticks
@@ -55,25 +58,40 @@ hbimap <- basemap +
         axis.ticks.y=element_blank()  #remove y axis ticks
   )
 
-ggsave(filename="images/hbimap.png", plot=hbimap, scale=3)
+ggsave(filename="images/hbimap.png", plot=hbimap, scale=2)
 
 ```
-<!-- ::: {style="width: 150%;"} -->
+
+<!-- ::: {style="width: 1200px;"} -->
 
 ```{r}
 #| include: false
 #| warning: false
 #| message: false
-#| column: page
+#| fig-column: screen
+#| out-width: 1200px
+
+# #| fig-width: 20
+# #| out-width: 2400px
+# #| column: screen
+
+
+#  #| fig-height: 3.5
+#  #| layout-ncol: 2
+#  #| column: screen
+
+# hbimap
 
 hbimap
 
 ```
 
-:::{.column-page}
+
+<!-- ::: -->
+
+::: column-page
 ![](images/hbimap.png)
 :::
-
 
 ## HBI by month of sample
 

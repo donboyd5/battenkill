@@ -1,0 +1,37 @@
+# Leaflet map
+
+```{r}
+library(leaflet)
+#| include: true
+#| echo: false
+#| warning: false
+#| column: screen
+
+leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lat=43.14696, lng=-73.27972, popup="Center")
+  # addMarkers(lng=174.768, lat=-36.852, popup="The birthplace of R")
+```
+
+
+
+```{r}
+# https://github.com/USGS-R/hydroMap
+library(leaflet)
+basins <- getBasin(sites)
+Range=c(-81,-73,38,44)
+flowLines <- getFlowLines(Range, streamorder = 5)
+
+leaflet() %>% 
+  addProviderTiles("CartoDB.Positron") %>% 
+  setView(-78, 41, zoom = 6) %>%
+  addPolygons(data=basins, weight=2, color = "grey") %>%
+  addPolylines(data=flowLines, weight=1) %>%
+  addCircleMarkers(siteInfo$dec_long_va,siteInfo$dec_lat_va,
+                   color = "red",
+                   radius=4,
+                   stroke=FALSE,
+                   fillOpacity = 0.8, opacity = 0.8,
+                   popup=siteInfo$station_nm)
+```
+

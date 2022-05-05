@@ -1,5 +1,5 @@
 
-# specific files
+# main files
 .Rproj.user
 .Rhistory
 .RData
@@ -17,10 +17,16 @@ battbook/*_cache/
 battbook/*_files/
 
 # file types
+*.gpkg
 *.pdf
 *.png
+*.rar
 *.rda
 *.rdata
+
+# individual files
+vaa.rds
+
 
 
 # If there is a separator at the beginning or middle (or both) of the pattern, then the pattern is relative to the directory level of the particular .gitignore file itself. Otherwise the pattern may also match at any level below the .gitignore level.

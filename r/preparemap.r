@@ -9,6 +9,12 @@
 
 # https://lrouviere.github.io/TUTO_DATAVIZ/mapping.html
 
+# https://2019.stateofthemap.us/program/sun/osm-water-how-well-are-minnesotas-water-features-mapped.html
+# https://www.youtube.com/watch?v=Om0YDMJn5e0
+
+# https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer
+# https://www.usgs.gov/national-hydrography/access-national-hydrography-products
+
 
 # setup -------------------------------------------------------------------
 
@@ -47,49 +53,23 @@ location <- bkbb2 %>% opq()
 location
 
 
-# explore basemap options -------------------------------------------------
-washco_bb <- getbb("Washington County, NY")
-washco_map <- get_map(washco_bb, maptype = "roadmap")
-ggmap(washco_map)
-
-bennco_bb <- getbb("Bennington County, VT")
-bennco_map <- get_map(bennco_bb, maptype = "roadmap")
-ggmap(bennco_map)
-
-save(washco_map, bennco_map, file=here::here("data", "basemaps.rdata"))
+# # explore basemap options -------------------------------------------------
+# washco_bb <- getbb("Washington County, NY")
+# washco_map <- get_map(washco_bb, maptype = "roadmap")
+# ggmap(washco_map)
+# 
+# bennco_bb <- getbb("Bennington County, VT")
+# bennco_map <- get_map(bennco_bb, maptype = "roadmap")
+# ggmap(bennco_map)
+# 
+# save(washco_map, bennco_map, file=here::here("data", "basemaps.rdata"))
 
 
 # investigate features ----------------------------------------------------
 
-#create different types of streets
-main_st <- data.frame(type = c("motorway","trunk","primary","motorway_junction","trunk_link","primary_link","motorway_link"))
-st <- data.frame(type = available_tags('highway'))
-st <- subset(st, !type %in% main_st$type)
-
-path <- data.frame(type = c("footway","path","steps","cycleway"))
-st <- subset(st, !type %in% path$type)
-
-st <- as.character(st$type)
-main_st <- as.character(main_st$type)
-path <- as.character(path$type)
-
 avail_features <- available_features()
 avail_features
 
-available_tags("boundary")
-available_tags("administrative")
-available_tags("border_type")
-
-available_tags("place")
-
-available_tags('natural')
-available_tags('water')
-available_tags('waterway')
-available_tags('wetland')
-available_tags("spring")
-
-available_tags("boundary")  #  boundary=administrative admin_level=4 state borders
-available_tags("political")
 
 # https://wiki.openstreetmap.org/wiki/Boundaries
 # Subnational boundary=administrative + admin_level=3 to 11 marks subnational
@@ -97,10 +77,16 @@ available_tags("political")
 # national borders, with "parish", "district", "region", "province", "state"
 
 # get and save features ----
+available_tags("boundary")  #  boundary=administrative admin_level=4 state borders
+available_tags("political")
+available_tags("administrative")
+available_tags("border_type")
 
 stborders <- location %>%
   add_osm_feature(key = 'admin_level', value = '4') %>%
   osmdata_sf()
+saveRDS(stborders, here::here("data", "gis", "sfeatures", "stborders.rds"))
+# save(stborders, file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > stborders
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -112,9 +98,25 @@ stborders <- location %>%
 # $osm_multilines : NULL
 # $osm_multipolygons : 'sf' Simple Features Collection with 2 multipolygons
 
+#.. places ----
+
+available_tags("place")
+
+# https://wiki.openstreetmap.org/wiki/Tag:place%3Dvillage
+
+
+# > available_tags("place")
+# [1] "allotments"        "archipelago"       "borough"           "city"              "city_block"        "continent"        
+# [7] "country"           "county"            "district"          "farm"              "hamlet"            "island"           
+# [13] "islet"             "isolated_dwelling" "locality"          "municipality"      "neighbourhood"     "ocean"            
+# [19] "plot"              "province"          "quarter"           "region"            "sea"               "square"           
+# [25] "state"             "suburb"            "town"              "village"  
+
 villages <- location %>%
   add_osm_feature(key = 'place', value = 'village') %>%
   osmdata_sf()
+saveRDS(villages, here::here("data", "gis", "sfeatures", "villages.rds"))
+# save(stborders, villages, file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > villages
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -129,6 +131,8 @@ villages <- location %>%
 places <- location %>%
   add_osm_feature(key = 'place', value = c("city", "hamlet", "village")) %>%
   osmdata_sf()
+saveRDS(places, here::here("data", "gis", "sfeatures", "places.rds"))
+# save(stborders, villages, places, file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > places
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -141,11 +145,56 @@ places <- location %>%
 # $osm_multipolygons : 'sf' Simple Features Collection with 5 multipolygons
 
 
+# neighborhood <- location %>%
+#   add_osm_feature(key = 'place', value = c("neighborhood")) %>%
+#   osmdata_sf()
+# # nothing
+
+# suburb <- location %>%
+#   add_osm_feature(key = 'place', value = c("suburb")) %>%
+#   osmdata_sf()
+# nothing
+
+# municipality <- location %>%
+#   add_osm_feature(key = 'place', value = c("municipality")) %>%
+#   osmdata_sf()
+# nothing
+
+borough <- location %>%
+  add_osm_feature(key = 'place', value = c("borough")) %>%
+  osmdata_sf()
+# nothing
+
+locality <- location %>%
+  add_osm_feature(key = 'place', value = c("locality")) %>%
+  osmdata_sf()
+saveRDS(locality, here::here("data", "gis", "sfeatures", "locality.rds"))
+# save(stborders, villages, places, locality, file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
+# > locality
+# Object of class 'osmdata' with:
+#   $bbox : 43.0439298,-73.58,43.25,-72.9794409
+# $overpass_call : The call submitted to the overpass API
+# $meta : metadata including timestamp and version numbers
+# $osm_points : 'sf' Simple Features Collection with 649 points
+# $osm_lines : NULL
+# $osm_polygons : 'sf' Simple Features Collection with 1 polygons
+# $osm_multilines : NULL
+# $osm_multipolygons : 'sf' Simple Features Collection with 1 multipolygons
+
+#.. streets ----
+hwytags <- available_tags('highway')
+mainst <- c("motorway", "trunk", "primary", "motorway_junction", "trunk_link", 
+            "primary_link", "motorway_link")
+pathst <-  c("footway", "path", "steps", "cycleway")
+stxmainxpath <- setdiff(setdiff(hwytags, mainst), pathst)
+
 main_streets <- location %>%
   add_osm_feature(key = "highway", 
-                  value = main_st) %>%
+                  value = mainst) %>%
   osmdata_sf()
-
+saveRDS(main_streets, here::here("data", "gis", "sfeatures", "main_streets.rds"))
+# save(stborders, villages, places, locality, main_streets, 
+#      file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > main_streets
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -159,8 +208,11 @@ main_streets <- location %>%
 
 streets <- location %>%
   add_osm_feature(key = "highway", 
-                  value = st) %>%
+                  value = stxmainxpath) %>%
   osmdata_sf()
+saveRDS(streets, here::here("data", "gis", "sfeatures", "streets.rds"))
+# save(stborders, villages, places, locality, main_streets, streets,
+#      file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > streets
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -172,10 +224,13 @@ streets <- location %>%
 # $osm_multilines : NULL
 # $osm_multipolygons : 'sf' Simple Features Collection with 6 multipolygons
 
-streets2 <- location %>%
+secondary <- location %>%
   add_osm_feature(key = "highway", 
                   value = "secondary") %>%
   osmdata_sf()
+saveRDS(secondary, here::here("data", "gis", "sfeatures", "secondary.rds"))
+# save(stborders, villages, places, locality, main_streets, streets, secondary,
+#      file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > streets2
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -187,11 +242,14 @@ streets2 <- location %>%
 # $osm_multilines : NULL
 # $osm_multipolygons : NULL
 
-streets3 <- location %>%
+roads <- location %>%
   add_osm_feature(key = "highway", 
                   value = c("road", "secondary", "secondary_link",
                             "tertiary", "tertiary_link" )) %>%
   osmdata_sf()
+saveRDS(roads, here::here("data", "gis", "sfeatures", "roads.rds"))
+# save(stborders, villages, places, locality, main_streets, streets, secondary, roads,
+#      file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > streets3
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -205,10 +263,92 @@ streets3 <- location %>%
 
 
 #.. water ----
+available_tags('natural')
+# [1] "arch"          "arete"         "bare_rock"     "bay"           "beach"         "blowhole"      "cape"          "cave_entrance"
+# [9] "cliff"         "coastline"     "crevasse"      "dune"          "earth_bank"    "fell"          "fumarole"      "geyser"       
+# [17] "glacier"       "grassland"     "heath"         "hill"          "hot_spring"    "isthmus"       "moor"          "mud"          
+# [25] "peak"          "peninsula"     "reef"          "ridge"         "rock"          "saddle"        "sand"          "scree"        
+# [33] "scrub"         "shingle"       "shoal"         "shrubbery"     "sinkhole"      "spring"        "stone"         "strait"       
+# [41] "tree"          "tree_row"      "tundra"        "valley"        "volcano"       "water"         "wetland"       "wood"   
+# spring strait water wetland waterway
+
+available_tags('water')
+# > available_tags('water')
+# [1] "basin"           "canal"           "ditch"           "fish_pass"       "lagoon"          "lake"            "lock"           
+# [8] "moat"            "oxbow"           "pond"            "reflecting_pool" "reservoir"       "river"           "stream_pool"    
+# [15] "wastewater"  
+waterbody <- c("lagoon", "lake", "oxbow", "pond", "reflecting_pool", "reservoir", "stream_pool")
+
+available_tags('waterway')
+# > available_tags('waterway')
+# [1] "boatyard"      "canal"         "dam"           "ditch"         "dock"          "drain"         "fairway"       "fuel"         
+# [9] "lock_gate"     "pressurised"   "river"         "riverbank"     "soakhole"      "stream"        "tidal_channel" "turning_point"
+# [17] "water_point"   "waterfall"     "weir"  
+waterway <- c("canal", "river", "stream", "waterfall")
+owway <- setdiff(available_tags('waterway'), waterway)
+
+available_tags('wetland')
+available_tags("spring")
+available_tags("spring")
+
+#.... new water items ----
+allnatwater <- location %>%
+  add_osm_feature(key = "natural", 
+                  value = c("water", "wetland", "shoal", "spring")) %>%
+  osmdata_sf()
+
+allwater <- location %>%
+  add_osm_feature(key = "water", 
+                  value = available_tags("water")) %>%
+  osmdata_sf()
+
+allwaterway <- location %>%
+  add_osm_feature(key = "waterway", 
+                  value = available_tags("waterway")) %>%
+  osmdata_sf()
+
+sfwaterbody <- location %>%
+  add_osm_feature(key = "water", 
+                  value = waterbody) %>%
+  osmdata_sf()
+saveRDS(sfwaterbody, here::here("data", "gis", "sfeatures", "sfwaterbody.rds"))
+
+sfwaterway <- location %>%
+  add_osm_feature(key = "waterway", 
+                  value = waterway) %>%
+  osmdata_sf()
+saveRDS(sfwaterway, here::here("data", "gis", "sfeatures", "sfwaterway.rds"))
+
+sfowway <- location %>%
+  add_osm_feature(key = "waterway", 
+                  value = owway) %>%
+  osmdata_sf()
+
+sfwetland <- location %>%
+  add_osm_feature(key = "natural", 
+                  value = 'wetland') %>%
+  osmdata_sf()
+saveRDS(sfwetland, here::here("data", "gis", "sfeatures", "sfwetland.rds"))
+
+sfspring <- location %>%
+  add_osm_feature(key = "natural", 
+                  value = 'spring') %>%
+  osmdata_sf()
+# saveRDS(sfwaterway, here::here("data", "gis", "sfeatures", "sfwaterway.rds"))
+
+save(sfwaterbody, sfwaterway,
+     file=here::here("data", "gis", "sfeatures", "sfwater.rdata"))
+load(here::here("data", "gis", "sfeatures", "sfwater.rdata"), verbose=TRUE)
+
+#.... old water items
 water <- location %>%
   add_osm_feature(key = "natural", 
                   value = c("water")) %>%
   osmdata_sf()
+saveRDS(water, here::here("data", "gis", "sfeatures", "water.rds"))
+# save(stborders, villages, places, locality, main_streets, streets, secondary, roads,
+#      water,
+#      file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > water
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -224,6 +364,10 @@ rivers <- location %>%
   add_osm_feature(key = "water", 
                   value = c("river")) %>%
   osmdata_sf()
+saveRDS(rivers, here::here("data", "gis", "sfeatures", "rivers.rds"))
+# save(stborders, villages, places, locality, main_streets, streets, secondary, roads,
+#      water, rivers,
+#      file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > rivers
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -238,6 +382,10 @@ rivers <- location %>%
 wway <- location %>%
   add_osm_feature(key = "waterway", value = "river") %>%
   osmdata_sf()
+saveRDS(wway, here::here("data", "gis", "sfeatures", "wway.rds"))
+save(stborders, villages, places, locality, main_streets, streets, secondary, roads,
+     water, rivers, wway,
+     file=here::here("data", "gis", "sfeatures", "sfeatures.rdata"))
 # > wway
 # Object of class 'osmdata' with:
 #   $bbox : 43.0439298,-73.58,43.25,-72.9794409
@@ -307,6 +455,7 @@ wetland <- location %>%
 # $osm_multilines : NULL
 # $osm_multipolygons : NULL
 
+#.. misc special features ----
 rail <- location %>%
   add_osm_feature(key = "railway", 
                   value = c("rail")) %>%
@@ -354,7 +503,7 @@ buildings <- location %>%
 # $osm_multipolygons : NULL
 
 save(avail_features,
-     stborders, villages, places,
+     stborders, villages, places, locality,
      main_streets, streets, streets2, streets3, 
      water, rivers, wetland, stream, wway, 
      rail, parks, buildings, 
@@ -364,8 +513,8 @@ save(avail_features,
 # prepare main map --------------------------------------------------------
 
 #.. get data ----
-load(here::here("data", "basemaps.rdata"))
-load(here::here("data", "batt_sf.rdata"))
+# load(here::here("data", "basemaps.rdata"))
+load(here::here("data", "gis", "batt_sf.rdata"))
 
 summary(bkill)
 
@@ -398,17 +547,6 @@ waycolor <- "green"
 
 #.. explore features on the map -----
 
-# library(raster)
-# washbenn <- mosaic(washco_map, bennco_map)
-# washbenn <- cbind(washco_map, bennco_map)
-# 
-# washbenn <- raster::merge(washco_map, bennco_map)
-# 
-# ggmap(washco_map) + ggmap(bennco_map)
-# 
-# ggmap(washco_map + bennco_map)
-
-
 #.. get the water features right ----
 wmap <- ggplot() +
   geom_sf(data = water$osm_polygons, fill = '#c6e1e3', colour = '#c6e1e3', size=1.5) +
@@ -426,9 +564,12 @@ wmap <- ggplot() +
 #.. get the municipalities right ----
 ggplot() +
   geom_sf(data = water$osm_polygons, fill = '#c6e1e3', colour = '#c6e1e3', size=1.5) +
+  geom_sf(data = water$osm_multipolygons, fill = '#c6e1e3', colour = '#c6e1e3', size=1.5) +
   geom_sf(data = places$osm_polygons, colour = 'lightgrey', fill="lightgrey") +
   geom_sf(data = places$osm_multipolygons, colour = 'lightgrey', fill="lightgrey") +
-  geom_sf(data = places$osm_lines, colour = 'black') +
+  geom_sf(data = places$osm_lines, colour = 'lightgrey') +
+  geom_sf(data = locality$osm_polygons, colour = 'red', fill="red") +
+  geom_sf(data = locality$osm_multipolygons, colour = 'red', fill="red") +
   coord_sf(xlim=xlims,
            ylim=ylims, 
            expand=FALSE)

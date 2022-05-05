@@ -18,6 +18,7 @@ book:
     - index.qmd
     - intro.qmd
     # - notes.qmd
+    - leaflet.qmd
     - hbi.qmd
     - ept.qmd
     - pma.qmd
