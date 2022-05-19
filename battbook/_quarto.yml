@@ -18,7 +18,7 @@ book:
     - index.qmd
     - intro.qmd
     # - notes.qmd
-    - leaflet.qmd
+    # - leaflet.qmd
     - hbi.qmd
     - ept.qmd
     - pma.qmd
@@ -41,6 +41,7 @@ execute:
 
 format:
   html:
+    css: style.css
     theme: cosmo
     self-contained: false
   # pdf:

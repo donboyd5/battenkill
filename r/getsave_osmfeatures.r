@@ -24,7 +24,7 @@ library(sf)
 library(ggmap)
 
 # define the bounding box ----
-bkill <- readRDS(here::here("data", "bkill.rds"))
+bkill <- readRDS(here::here("data", "gis", "bkill.rds"))
 
 bkbb <- bkill %>%
   # lbrt order
@@ -46,7 +46,7 @@ margins <- c(-.01, -.01, .01, .01)
 bkbb2 <- unlist(bkbb) + margins # convert to named vector
 bkbb2
 
-saveRDS(bkbb2, here::here("data", "bkbb2.rds"))
+saveRDS(bkbb2, here::here("data", "gis", "bkbb2.rds"))
 
 # create an opq overpass query object for the location
 location <- bkbb2 %>% opq()

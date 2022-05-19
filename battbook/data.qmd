@@ -2,7 +2,7 @@
 ```{r startup}
 
 source(here::here("r", "libraries.r"))
-bkill <- readRDS(here::here("data", "bkill.rds"))
+bkill <- readRDS(here::here("data", "gis", "bkill.rds"))
 
 ```
 
@@ -10,7 +10,10 @@ bkill <- readRDS(here::here("data", "bkill.rds"))
 
 Here are the key data elements. I'll add more as I learn what they are.
 
+::: {style="width: 150%; height:auto; margin: auto; font-size: 8pt;"}
+
 ```{r}
+#| label: data_elements
 #| include: true
 
 tabdata <- bkill %>%
@@ -31,5 +34,8 @@ tab <- datatable(tabdata,
 tab
 
 ```
+
+:::
+
 
 

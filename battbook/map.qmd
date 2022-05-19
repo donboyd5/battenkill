@@ -1,0 +1,182 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: startup
+source(here::here("r", "libraries.r"))
+library(leaflet)
+
+bkill <- readRDS(here::here("data", "gis", "bkill.rds"))
+# git status --ignored
+
+```
+
+```{r}
+critvals <- bkill |> 
+  select(latitude, longitude) |> 
+  distinct() |> 
+  summarise(minlat=min(latitude, na.rm=TRUE),
+            maxlat=max(latitude, na.rm=TRUE),
+            minlong=min(longitude, na.rm=TRUE),
+            maxlong=max(longitude, na.rm=TRUE)) |> 
+  mutate(avglat=mean(minlat, maxlat),
+         avglong=mean(minlong, maxlong))
+
+latctr <- critvals$avglat
+lngctr <- critvals$avglong
+
+# 43.10306513409933, -73.33026632402067
+latctr <- 43.103
+lngctr <- -73.330
+
+df <- bkill |> 
+  select(lat=latitude, long=longitude) |> 
+  distinct()
+
+m <- leaflet(options = leafletOptions(minZoom = 0, maxZoom = 18)) %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng=lngctr, lat=latctr, popup="Midpoint") %>%
+  addCircles(data=df)
+m
+# defaults
+# leaflet(options = leafletOptions(minZoom = 0, maxZoom = 18))
+# min max zoom 0, 18; minzoom high means fully zoomed in, maxzoom low means world
+
+# setView()
+# fitBounds()
+# clearBounds()
+
+# leaflet() %>%
+#   addTiles() %>%  # Add default OpenStreetMap map tiles
+#   addMarkers(lng=174.768, lat=-36.852, popup="The birthplace of R")
+
+m <- leaflet() %>% addTiles() %>% setView(-71.0382679, 42.3489054, zoom = 18)
+m  # the RStudio 'headquarter'
+m %>% fitBounds(-72, 40, -70, 43)
+m %>% clearBounds()  # world view
+
+
+m <- leaflet() %>% setView(lng = lngctr, lat = latctr, zoom = 14)
+m %>% addTiles() %>% addCircles(data=df) # default is open street map
+m %>% addProviderTiles(providers$Stamen.Toner) %>% addCircles(data=df)
+m %>% addProviderTiles(providers$CartoDB.Positron) %>% addCircles(data=df)
+m %>% addProviderTiles(providers$Esri.NatGeoWorldMap) %>% addCircles(data=df)
+# NatGeoWorldMap seems to have the best streams but even it doesn't have streams
+# at some of the dots in Manchester
+
+# 
+m %>% addProviderTiles(providers$Stadia.Outdoors) %>% addCircles(data=df)
+m %>% addProviderTiles(providers$USGS.USTopo) %>% addCircles(data=df)
+
+m %>% addProviderTiles("Stadia.Outdoors") %>% addCircles(data=df)
+m %>% addProviderTiles("USGS.USTopo") %>% addCircles(data=df)
+
+att <- paste0("<a href='https://www.usgs.gov/'>",
+              "U.S. Geological Survey</a> | ",
+              "<a href='https://www.usgs.gov/laws/policies_notices.html'>",
+              "Policies</a>")
+m %>% addWMSTiles(GetURL("USGSTopo"),
+                  group = "USGS Topo", attribution = att, layers = "0") %>%
+  addCircles(data=df)
+
+opt <- leaflet::WMSTileOptions(format = "image/png", transparent = TRUE)
+leaflet() %>% addWMSTiles(map, GetURL("USGSTopo"),
+                  group = "USGS Topo", attribution = att, layers = "0")
+
+
+# Esri/ArcGIS
+# In order to use ArcGIS maps, you must register https://developers.arcgis.com/en/sign-up/ and abide by the terms of service. No special syntax is required.
+# AAPK968c37d432d4440fbf624ab729500499e-7okhmDNSgL6AD0FBbFG6bZrt-BatDJW4PCIb0Yg9YeQSfq3A-DORU-aDX861dC
+# Available Esri layers
+esrikey <- "AAPK968c37d432d4440fbf624ab729500499e-7okhmDNSgL6AD0FBbFG6bZrt-BatDJW4PCIb0Yg9YeQSfq3A-DORU-aDX861dC"
+
+
+# http://leaflet-extras.github.io/leaflet-providers/preview/index.html
+# Thunderforest.Outdoors
+# Esri.WorldTopoMap
+# Esri.NatGeoWorldMap
+# CartoDB.Voyager
+
+# USGS.USTopo # GOOD
+# var USGS_USTopo = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+# 	maxZoom: 20,
+# 	attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
+# });
+
+# https://waterdata.usgs.gov/blog/basemaps/
+# https://apps.nationalmap.gov/help/  # for base maps and layers
+
+for (pkg in c("leaflet", "rgdal", "dataRetrieval")) {
+  if (!pkg %in% rownames(utils::installed.packages()))
+    utils::install.packages(pkg, repos = "https://cloud.r-project.org/")
+}
+
+grp <- c("USGS Topo", "USGS Imagery Only", "USGS Imagery Topo",
+         "USGS Shaded Relief", "Hydrography")
+
+att <- paste0("<a href='https://www.usgs.gov/'>",
+              "U.S. Geological Survey</a> | ",
+              "<a href='https://www.usgs.gov/laws/policies_notices.html'>",
+              "Policies</a>")
+
+GetURL <- function(service, host = "basemap.nationalmap.gov") {
+  sprintf("https://%s/arcgis/services/%s/MapServer/WmsServer", host, service)
+}
+
+map <- leaflet::leaflet()
+
+map <- leaflet::addWMSTiles(map, GetURL("USGSTopo"),
+                            group = grp[1], attribution = att, layers = "0")
+map <- leaflet::addWMSTiles(map, GetURL("USGSImageryOnly"),
+                            group = grp[2], attribution = att, layers = "0")
+map <- leaflet::addWMSTiles(map, GetURL("USGSImageryTopo"),
+                            group = grp[3], attribution = att, layers = "0")
+map <- leaflet::addWMSTiles(map, GetURL("USGSShadedReliefOnly"),
+                            group = grp[4], attribution = att, layers = "0")
+
+# An overlay map layer adds information, such as river and lake features, to a base map. Add the tiled overlay for the National Hydrography Dataset to the map widget:
+opt <- leaflet::WMSTileOptions(format = "image/png", transparent = TRUE)
+map <- leaflet::addWMSTiles(map, GetURL("USGSHydroCached"),
+                            group = grp[5], options = opt, layers = "0")
+map <- leaflet::hideGroup(map, grp[5])
+
+
+
+# Stadia.Outdoors
+# Plain JavaScript:
+# var Stadia_Outdoors = L.tileLayer('https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png', {
+# 	maxZoom: 20,
+# 	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+# });
+
+
+leaflet() %>%
+  addWMSTiles(GetURL("USGSTopo"),
+              group = "USGS Topo", attribution = att, layers = "0")
+
+
+m %>% addWMSTiles(GetURL("USGSTopo"),
+                  group = "USGS Topo", attribution = att, layers = "0") %>%
+  addCircles(color="red", data=df)
+
+# this is good! ----
+m %>% addWMSTiles(GetURL("USGSHydroCached"),
+                  group = "Hydrography", attribution = att, layers = "0") %>%
+  addCircles(color="red", data=df)
+
+# what does transparency do??
+opt <- leaflet::WMSTileOptions(format = "image/png", transparent = TRUE)
+m %>% addWMSTiles(GetURL("USGSHydroCached"),
+                  group = "Hydrography", attribution = att, options = opt, layers = "0") %>%
+  addCircles(color="red", data=df)
+
+# circles: geographic size of circle changes as you zoom (visible size stays same)
+# circle markers: geographic size is fixed
+
+
+
+```
+

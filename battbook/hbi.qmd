@@ -4,18 +4,79 @@ The Hilsenhoff Biotic Index (HBI) measures the tolerance of organisms in an area
 
 The HBI is calculated by multiplying the number of individuals of each species by its assigned tolerance value (see Appendix 18.13 of the NY citation below), summing these products, and dividing by the total number of individuals. Tolerance values, listed in Appendix 17.11 of the NY citation, are mostly from Hilsenhoff (1987) however some have been recalibrated based on NYS datasets. [@newyorkstatedepartmentofenvironmentalconservationdivisionofwaterStandardOperatingProcedure2021]
 
-```{r startup}
-
+```{r}
+#| label: startup
 source(here::here("r", "libraries.r"))
-# bkill <- readRDS(here::here("data", "bkill.rds"))
+bkill <- readRDS(here::here("data", "gis", "bkill.rds"))
 # git status --ignored
 
 ```
+
+## HBI over time at sites with repeated observations
+```{r}
+#| label: hbi_4obs
+#| include: false
+#| fig-height: 10
+#| fig-width: 7.5
+
+repeats <- bkill %>%
+  filter(!is.na(hbi)) %>%
+  count(locid, locdesc, sort = TRUE) %>%
+  filter(n > 1)
+
+p <- bkill %>%
+  filter(locid %in% (repeats %>% filter(n >=4) %>% pull(locid))) %>%
+  ggplot(aes(date, hbi)) +
+  geom_point(size=2.25, colour="blue") +
+  # geom_smooth(se=FALSE) +
+  scale_y_continuous(breaks=0:10, limits=c(0, NA)) +
+  facet_wrap(~locid+locdesc, ncol=3) +
+  labs(x=NULL) +
+  ggtitle("HBI over time at locations that had at least 4 repeated observations",
+          subtitle= "Higher values indicate more organic (sewage) pollution") +
+  theme_bw()
+ggsave(here::here("images", "hbi_over_time.png"), height=10, width=7.5, units="in", scale = 1)
+
+p
+
+```
+
+```{r}
+#| label: hbi_3obs
+#| include: true
+#| fig-height: 10
+#| fig-width: 8.5
+
+repeats <- bkill %>%
+  filter(!is.na(hbi)) %>%
+  count(locid, locdesc, sort = TRUE) %>%
+  filter(n > 1)
+
+p <- bkill %>%
+  filter(locid %in% (repeats %>% filter(n >=3) %>% pull(locid))) %>%
+  ggplot(aes(date, hbi)) +
+  geom_point(size=2.25, colour="blue") +
+  # geom_smooth(se=FALSE) +
+  scale_y_continuous(breaks=0:10, limits=c(0, NA)) +
+  facet_wrap(~locid+locdesc, ncol=4) +
+  labs(x=NULL) +
+  ggtitle("HBI over time at locations that had at least 3 repeated observations",
+          subtitle= "Higher values indicate more organic (sewage) pollution") +
+  theme_bw()
+ggsave(here::here("images", "hbi_over_time3.png"), height=10, width=8.5, units="in", scale = 1)
+
+p
+
+```
+
+
 
 ## HBI geolocations
 
 ```{r}
 #| label: map
+#| warnings: false
+#| messages: false
 bkill <- readRDS(here::here("data", "gis", "bkill.rds"))
 bkbb2 <- readRDS(here::here("data", "gis", "bkbb2.rds"))
 basemap <- readRDS(here::here("data", "gis", "basemap.rds"))
@@ -65,9 +126,10 @@ ggsave(filename="images/hbimap.png", plot=hbimap, scale=2)
 <!-- ::: {style="width: 1200px;"} -->
 
 ```{r}
+#| label: hbimap
 #| include: false
-#| warning: false
-#| message: false
+#| warnings: false
+#| messages: false
 #| fig-column: screen
 #| out-width: 1200px
 
@@ -144,6 +206,7 @@ pdata %>%
 ## HBI by date of sample
 
 ```{r}
+#| label: hbi_time
 #| include: true
 
 # use green for VT, blue for NY
@@ -181,6 +244,7 @@ pdata %>%
 ## More \[TO COME\]
 
 ```{r}
+#| label: more
 #| eval: false
 #| include: true
 

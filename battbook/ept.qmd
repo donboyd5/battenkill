@@ -12,12 +12,65 @@ The EPT Index is based on the premise that high-quality streams usually have the
 
 ```{r startup}
 source(here::here("r", "libraries.r"))
-bkill <- readRDS(here::here("data", "bkill.rds"))
+# bkill <- readRDS(here::here("data", "bkill.rds"))
+bkill <- readRDS(here::here("data", "gis", "bkill.rds"))
 ```
 
 
-## Analysis [TO COME]
+## EPT richnesss measure over time at sites with repeated observations
+
 ```{r}
+#| include: false
+#| fig-height: 10
+#| fig-width: 7.5
+
+repeats <- bkill %>%
+  filter(!is.na(ept_rich)) %>%
+  count(locid, locdesc, sort = TRUE) %>%
+  filter(n > 1)
+
+p <- bkill %>%
+  filter(locid %in% (repeats %>% filter(n >=4) %>% pull(locid))) %>%
+  ggplot(aes(date, ept_rich)) +
+  geom_point(size=2.25, colour="blue") +
+  # geom_smooth(se=FALSE) +
+  scale_y_continuous(limits=c(0, NA)) +
+  facet_wrap(~locid+locdesc, ncol=3) +
+  labs(x=NULL) +
+  ggtitle("EPT richness measure over time at locations that had at least 4 repeated observations",
+          subtitle="Higher values mean greater richness") +
+  theme_bw()
+p
+ggsave(here::here("results", "eptrich_over_time.png"), height=10, width=7.5, units="in", scale = 1)
+
 
 ```
 
+
+
+```{r}
+#| include: true
+#| fig-height: 10
+#| fig-width: 8.5
+
+repeats <- bkill %>%
+  filter(!is.na(ept_rich)) %>%
+  count(locid, locdesc, sort = TRUE) %>%
+  filter(n > 1)
+
+p <- bkill %>%
+  filter(locid %in% (repeats %>% filter(n >=3) %>% pull(locid))) %>%
+  ggplot(aes(date, ept_rich)) +
+  geom_point(size=2.25, colour="blue") +
+  # geom_smooth(se=FALSE) +
+  scale_y_continuous(limits=c(0, NA)) +
+  facet_wrap(~locid+locdesc, ncol=4) +
+  labs(x=NULL) +
+  ggtitle("EPT richness measure over time at locations that had at least 3 repeated observations",
+          subtitle="Higher values mean greater richness") +
+  theme_bw()
+p
+ggsave(here::here("results", "eptrich_over_time3.png"), height=10, width=8.5, units="in", scale = 1)
+
+
+```
